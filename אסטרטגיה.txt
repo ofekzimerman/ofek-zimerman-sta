@@ -1,0 +1,827 @@
+﻿{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red101\green103\blue115;\red16\green18\blue26;\red255\green255\blue255;
+\red74\green135\blue243;\red46\green126\blue46;\red56\green178\blue151;\red199\green202\blue212;\red242\green100\blue109;
+\red170\green77\blue188;\red38\green95\blue242;\red240\green106\blue20;}
+{\*\expandedcolortbl;;\cssrgb\c47059\c48235\c52549;\cssrgb\c7451\c9020\c13333;\cssrgb\c100000\c100000\c100000;
+\cssrgb\c35686\c61176\c96471;\cssrgb\c21961\c55686\c23529;\cssrgb\c25882\c74118\c65882;\cssrgb\c81961\c83137\c86275;\cssrgb\c96863\c48627\c50196;
+\cssrgb\c72941\c40784\c78431;\cssrgb\c19216\c47451\c96078;\cssrgb\c96078\c49804\c9020;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww27140\viewh17320\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // \'a9 chhagansinghmeena\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 //
+\f1\b @version=
+\f0\b0 5\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 indicator\cf4 \strokec4 (\cf6 \strokec6 "Machine Learning : Cosine Similarity & Euclidean + Lorentzian Distance"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 overlay\cf7 \strokec7 =\cf9 \strokec9 true\cf4 \strokec4 )\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 import\cf4 \strokec4    \cf5 \strokec5 chhagansinghmeena/BankNifty_CSM/16\cf4 \strokec4    \cf7 \strokec7 as\cf4 \strokec4    \cf10 \strokec10 CSM\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 //====================================== Thanks to JDEHORTY For coding structure ==========//\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\qc\partightenfactor0
+\cf2 \cb3 \strokec2 //========== Here i am using similar coding structure that JDEHORTY used in his script =========//\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 //=============== There are some piece of code is similar to JDEHORTY script, Gratitude to him =============//\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //===============================================================================================//\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 //============== For Customization Thanks to LUX ALGO idea taken from one of his script ===========\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 //This function appears to calculate the weighted average of a series (_src) using a rational quadratic weighting scheme. \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //It iterates over the elements of _src, assigning a weight (w) to each element based on its index and the provided parameters (_lookback and _relativeWeight).\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // The weighted average is then calculated and returned as rationalQuad.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Function to calculate the rational quadratic value based on input parameters\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - _src: Input series\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - _lookback: Lookback period for calculating weights\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - _relativeWeight: Relative weight factor\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - startAtBar: Starting index for the loop (default: 0)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - Rational quadratic value based on the calculations\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 rationalQuadratic\cf4 \strokec4 (\cf8 \strokec8 _src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _lookback\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _relativeWeight\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 startAtBar\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \strokec4    \cf2 \strokec2 // Initialize the current weight variable\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 _cumulativeWeight\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \strokec4    \cf2 \strokec2 // Initialize the cumulative weight variable\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 _size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.size\cf4 \strokec4 (\cf5 \strokec5 array.from\cf4 \strokec4 (\cf8 \strokec8 _src\cf4 \strokec4 )) \cf2 \strokec2 // Get the size of the input series\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 for\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 to\cf4 \strokec4    \cf8 \strokec8 _size\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 startAtBar\cf4 \strokec4    \cf2 \strokec2 // Iterate over the input series\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 y\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 _src\cf4 \strokec4 [\cf8 \strokec8 i\cf4 \strokec4 ] \cf2 \strokec2 // Get the value at index i\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 w\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    (\cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 ) \cf7 \strokec7 /\cf4 \strokec4    ((\cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 _lookback\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 ) \cf7 \strokec7 *\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 _relativeWeight\cf4 \strokec4 )))\cf7 \strokec7 ,\cf4 \strokec4    \cf7 \strokec7 -\cf8 \strokec8 _relativeWeight\cf4 \strokec4 ) \cf2 \strokec2 // Calculate the weight using the rational quadratic formula\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 y\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 w\cf4 \strokec4    \cf2 \strokec2 // Add the weighted value to the current weight\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 _cumulativeWeight\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 w\cf4 \strokec4    \cf2 \strokec2 // Add the weight to the cumulative weight\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 rationalQuad\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 _cumulativeWeight\cf4 \strokec4    \cf2 \strokec2 // Calculate the rational quadratic value\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 rationalQuad\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 //Linear interpolation involves finding a proportional value within a range based on the relative position of the original value. \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Function to perform linear interpolation on a series\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - src: Input series for interpolation\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - oldMax: Maximum value of the original range\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - lookback: Number of bars to look back for calculating the minimum value (default: 100)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - Interpolated values based on the relative position in the range\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_Linear_interpolation\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 oldMax\cf4 \strokec4    \cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 simple
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 lookback\cf7 \strokec7 =\cf12 \strokec12 100\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 minVal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.lowest\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf8 \strokec8 lookback\cf4 \strokec4 )\cb1 \
+\cb3          (\cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 minVal\cf4 \strokec4 ) \cf7 \strokec7 /\cf4 \strokec4    (\cf8 \strokec8 oldMax\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 minVal\cf4 \strokec4 ) \cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Function to calculate get_linear_transformationd RSI using linear interpolation\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - src: Input series for RSI calculation\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - n1: Lookback period for RSI calculation\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - n2: Lookback period for EMA smoothing of RSI\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - get_linear_transformationd RSI value using linear interpolation\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 n_rsi\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 simple
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 n1\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 simple
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 n2\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf11 \strokec11 get_Linear_interpolation\cf4 \strokec4 (\cf5 \strokec5 ta.ema\cf4 \strokec4 (\cf5 \strokec5 ta.rsi\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 n1\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 n2\cf4 \strokec4 )\cf7 \strokec7 ,\cf12 \strokec12 100\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // The purpose of this code is to provide a function that calculates the KST line, which is a technical indicator used in financial analysis to identify potential trend reversals and generate trading signals.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Function to calculate the KST (Know Sure Thing) line based on the input series\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - src: Input series\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - KST line calculated using the input series\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 calc_kst\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf2 \strokec2 // Define the lengths for rate of change (ROC) calculations\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 lengthROC1\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 10\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC2\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 15\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC3\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 20\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC4\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 30\cf4 \cb1 \strokec4 \
+\cb3          \cf2 \strokec2 // Calculate the rate of change (ROC) for each length \cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 roc1\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC1\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 roc2\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC2\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 roc3\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC3\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 roc4\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lengthROC4\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Apply smoothing to the ROC values\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 smoothed1\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.sma\cf4 \strokec4 (\cf8 \strokec8 roc1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 smoothed2\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.sma\cf4 \strokec4 (\cf8 \strokec8 roc2\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 smoothed3\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.sma\cf4 \strokec4 (\cf8 \strokec8 roc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 smoothed4\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.sma\cf4 \strokec4 (\cf8 \strokec8 roc4\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Calculate the KST line\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 kstLine\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 smoothed1\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 smoothed2\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 smoothed3\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf12 \strokec12 4\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 smoothed4\cf4 \cb1 \strokec4 \
+\cb3          \cf2 \strokec2 // Calculate the RSI (Relative Strength Index) of the KST line with a length of 14\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 rsiKST\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.rsi\cf4 \strokec4 (\cf8 \strokec8 kstLine\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 14\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 rsiKST\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Function to perform a linear transformation on a series based on historical minimum and maximum values\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: The purpose of this code is to perform a linear transformation on a given series (src) based on the historical minimum and maximum values within a specified lookback period.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - src: Input series to be transformed (default: close)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - min: Minimum value of the new range\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - max: Maximum value of the new range\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - lookback: Number of bars to consider for calculating historical minimum and maximum (default: 200)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      - Transformed series based on the linear transformation\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_linear_transformation\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 min\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 max\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 lookback\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 200\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \strokec4    \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf2 \strokec2 // Calculate the historical minimum and maximum values within the lookback period\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 _historicMin\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.highest\cf4 \strokec4 (\cf5 \strokec5 nz\cf4 \strokec4 (\cf8 \strokec8 src\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lookback\cf4 \strokec4 ) \cb1 \
+\cb3          \cf8 \strokec8 _historicMax\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.lowest\cf4 \strokec4 (\cf5 \strokec5 nz\cf4 \strokec4 (\cf8 \strokec8 src\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lookback\cf4 \strokec4 ) \cb1 \
+\cb3          \cf2 \strokec2 // Perform the linear transformation calculation using the formula\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 linearValue\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 min\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    (\cf8 \strokec8 max\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 min\cf4 \strokec4 ) \cf7 \strokec7 *\cf4 \strokec4    (\cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 _historicMin\cf4 \strokec4 ) \cf7 \strokec7 /\cf4 \strokec4    \cf5 \strokec5 math.max\cf4 \strokec4 (\cf8 \strokec8 _historicMax\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 _historicMin\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 10e\cf12 \strokec12 -10\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Return the transformed series\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 linearValue\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // new approach to calculate more realistic and accurate quarditic calculation\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Perform a sigmoidal transformation on a series based on the provided parameters\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // - src: The input series to be transformed\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // - lookback: The number of bars to consider for the sigmoid calculation (default: 20)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // - relativeWeight: The relative weight factor for the sigmoid calculation (default: 8)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // - startAtBar: The starting bar index for the calculation (default: 25)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The transformed value after applying the sigmoidal transformation\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 sigmoid\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 lookback\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 20\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 relativeWeight\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 8\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 startAtBar\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 25\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 _cumulativeWeight\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 _size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 startAtBar\cf4 \strokec4 ) \cf7 \strokec7 +\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 for\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 _size\cf4 \strokec4    \cf7 \strokec7 to\cf4 \strokec4    \cf5 \strokec5 math.max\cf4 \strokec4 (\cf8 \strokec8 startAtBar\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lookback\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 startAtBar\cf4 \strokec4 ) \cf7 \strokec7 -\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 y\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 [\cf8 \strokec8 i\cf4 \strokec4 ]\cb1 \
+\cb3                  \cf8 \strokec8 w\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    (\cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 i\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 startAtBar\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 ) \cf7 \strokec7 /\cf4 \strokec4    (\cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 lookback\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 ) \cf7 \strokec7 *\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 relativeWeight\cf4 \strokec4 ))\cf7 \strokec7 ,\cf4 \strokec4    \cf7 \strokec7 -\cf8 \strokec8 relativeWeight\cf4 \strokec4 )\cb1 \
+\cb3                  \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 y\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 w\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 _cumulativeWeight\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 w\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 sigmoidValue\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 _currentWeight\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 _cumulativeWeight\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 sigmoidValue\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Calculate MACD\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Calculate the MACD (Moving Average Convergence Divergence) value based on the input series\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      src: The input series for which to calculate the MACD (default: close)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The MACD value\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 macd\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 series
+\f0\b0 \cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 close\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          [\cf8 \strokec8 macdLine\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 signalLine\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _\cf4 \strokec4 ] \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.macd\cf4 \strokec4 (\cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 12\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 26\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 9\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Calculate the linear transformation of the MACD line\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 ma\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 get_linear_transformation\cf4 \strokec4 (\cf8 \strokec8 macdLine\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 14\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Calculate the linear transformation of the signal line\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 sa\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 get_linear_transformation\cf4 \strokec4 (\cf8 \strokec8 signalLine\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 14\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4 )\cb1 \
+\cb3          \cf2 \strokec2 // Average the transformed MACD and signal lines\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 macd_val\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 math.avg\cf4 \strokec4 (\cf8 \strokec8 ma\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 sa\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 macd_val\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Define input parameters\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 historyLookBack\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.int\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'History Lookback'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf12 \strokec12 2000\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'General Settings'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'Number of historical periods to consider for analysis.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 nearest_Probable_Distance\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.int\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'Nearest Probable Distance'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf12 \strokec12 8\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'General Settings'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The closest distance to consider when determining probable values.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.session\cf4 \strokec4 (\cf6 \strokec6 "Top Right"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Stats Location"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 options\cf7 \strokec7 =\cf4 \strokec4 [\cf6 \strokec6 "Top Right"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Bottom Right"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Top Left"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Bottom Left"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Middle Right"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Bottom Center"\cf4 \strokec4 ]\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'General Settings'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 inline\cf7 \strokec7 =\cf6 \strokec6 "Stats Location"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The position of the statistics display on the chart.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 text_size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.session\cf4 \strokec4 (\cf6 \strokec6 'Small'\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Stats Size"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 options\cf7 \strokec7 =\cf4 \strokec4 [\cf6 \strokec6 "Tiny"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Small"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Normal"\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 "Large"\cf4 \strokec4 ]\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'General Settings'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 inline\cf7 \strokec7 =\cf6 \strokec6 "Stats Location"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The size of the text used for the statistics display.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.string\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'Moving Average Selection'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 options\cf7 \strokec7 =\cf4 \strokec4 [\cf6 \strokec6 'CPMA'\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'FRMA'\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'RationalQuad'\cf4 \strokec4 ]\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf6 \strokec6 'RationalQuad'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Moving Averages'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The type of moving average to use for trend analysis.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 cpmaLength\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.int\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "CPMA Length"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf12 \strokec12 9\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Moving Averages'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The length of the Centered Price Moving Average (CPMA) used for trend analysis.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 frmaLength\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.int\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "FRMA Length"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf12 \strokec12 14\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Moving Averages'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The length of the Fractal Adaptive Moving Average (FRMA) used for trend analysis.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 enableFilter\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.bool\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "Enable Trend Filter"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf9 \strokec9 true\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Filter'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'Enable or disable the trend filter for signal processing, which provides greater accuracy.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 isRational\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.bool\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "Use Rational smoothing"\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf9 \strokec9 true\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Filter'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'Enable or disable the rational smoothing function for the selected moving average, used as a trend filter.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 isRationalSigma\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.bool\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "Use Sigmoid smoothing "\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf9 \strokec9 true\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Filter'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'Enable or disable the sigmoid smoothing function, which works in conjunction with the rational smoothing function.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 methodSelection\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.string\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'Distance Calculation'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 options\cf7 \strokec7 =\cf4 \strokec4 [\cf6 \strokec6 'Lorentzian'\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Euclidean'\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Cosine similarity'\cf4 \strokec4 ]\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf6 \strokec6 'Cosine similarity'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Machine Learning : Methods'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The method used for calculating the distance similarity or dissimilarity when processing signals using machine learning techniques.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 start\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.time\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'Start Date'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf5 \strokec5 timestamp\cf4 \strokec4 (\cf6 \strokec6 '01 Jan 2023 03:30 +0000'\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Backtesting'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The date and time to begin trading from during the backtesting period.'\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 finish\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 input.time\cf4 \strokec4 (\cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 'End Date'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 defval\cf7 \strokec7 =\cf5 \strokec5 timestamp\cf4 \strokec4 (\cf6 \strokec6 '1 Jan 2099 15:30 +0000'\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 group\cf7 \strokec7 =\cf6 \strokec6 'Backtesting'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tooltip\cf7 \strokec7 =\cf6 \strokec6 'The date and time to stop trading during the backtesting period.'\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Define variables for the position of the table and the text size\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 table_position\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Top Left'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 position.top_left\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3      \cf8 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Bottom Left'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 position.bottom_left\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Middle Right'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 position.middle_right\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Bottom Center'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 position.bottom_center\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 dash_loc\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Top Right'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 position.top_right\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 position.bottom_right\cf4 \cb1 \strokec4 \
+\cb3      \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 table_text_size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 text_size\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Tiny'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 size.tiny\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3      \cf8 \strokec8 text_size\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Small'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 size.small\cf4 \strokec4    \cf7 \strokec7 :\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 text_size\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Normal'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 size.normal\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 size.large\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Get CPMA(Conceptive Price Moving Average) and FRMA(Fractional Moving Average)\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 CPMA\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf10 \strokec10 CSM.CSM_CPMA\cf4 \strokec4 (\cf8 \strokec8 length\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 cpmaLength\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 FRMA\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf10 \strokec10 CSM.frama_Calculation\cf4 \strokec4 (\cf9 \strokec9 close\cf7 \strokec7 ,\cf8 \strokec8 length\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 frmaLength\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 type\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureArrays
+\f0\b0 \cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f1\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f2\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f3\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f4\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f5\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 array
+\f0\b0 \cf4 \strokec4 <
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4 > \cf8 \strokec8 f6\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 type\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureSeries
+\f0\b0 \cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f1\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f2\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f3\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f4\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f5\cf4 \cb1 \strokec4 \
+\cb3          
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 f6\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 series_from\cf4 \strokec4 (\cf8 \strokec8 feature_string\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _close\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _high\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _low\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 _hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 f_paramA\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 f_paramB\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf7 \strokec7 switch\cf4 \strokec4    \cf8 \strokec8 feature_string\cf4 \cb1 \strokec4 \
+\cb3                  \cf6 \strokec6 "RSI"\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 n_rsi\cf4 \strokec4 (\cf8 \strokec8 _close\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 f_paramA\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 f_paramB\cf4 \strokec4 )        \cb1 \
+\cb3                  \cf6 \strokec6 "KST"\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_Linear_interpolation\cf4 \strokec4 (\cf11 \strokec11 calc_kst\cf4 \strokec4 (\cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 _close\cf4 \strokec4 )\cf7 \strokec7 ,\cf12 \strokec12 100\cf4 \strokec4 )\cb1 \
+\cb3                  \cf6 \strokec6 "CPMA"\cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_linear_transformation\cf4 \strokec4 (\cf8 \strokec8 CPMA\cf7 \strokec7 ,\cf12 \strokec12 14\cf7 \strokec7 ,\cf12 \strokec12 1\cf4 \strokec4 )\cb1 \
+\cb3                  \cf6 \strokec6 "VWAP"\cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_linear_transformation\cf4 \strokec4 (\cf5 \strokec5 ta.vwap\cf4 \strokec4 (\cf8 \strokec8 _close\cf4 \strokec4 )\cf7 \strokec7 ,\cf12 \strokec12 14\cf7 \strokec7 ,\cf12 \strokec12 1\cf4 \strokec4 )\cb1 \
+\cb3                  \cf6 \strokec6 "FRAMA"\cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_linear_transformation\cf4 \strokec4 (\cf8 \strokec8 FRMA\cf7 \strokec7 ,\cf12 \strokec12 14\cf7 \strokec7 ,\cf12 \strokec12 1\cf4 \strokec4 ) \cb1 \
+\cb3                  \cf6 \strokec6 "MACD"\cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 macd\cf4 \strokec4 (\cf8 \strokec8 _close\cf4 \strokec4 )          \cb1 \
+\cb3                  \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 featureSeries\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3    \cf11 \strokec11 FeatureSeries.new\cf4 \strokec4 (\cb1 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "CPMA"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f1\cf4 \cb1 \strokec4 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "RSI"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 14\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f2\cf4 \cb1 \strokec4 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "VWAP"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f3\cf4 \cb1 \strokec4 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "KST"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4      \cf2 \strokec2 // f4\cf4 \cb1 \strokec4 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "FRAMA"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f5\cf4 \cb1 \strokec4 \
+\cb3        \cf11 \strokec11 series_from\cf4 \strokec4 (\cf6 \strokec6 "MACD"\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 hlc3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4 )    \cf2 \strokec2 // f6\cf4 \cb1 \strokec4 \
+\cb3    )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f1Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f2Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f3Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f4Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f5Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 f6Array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 ()\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f1Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f1\cf4 \strokec4 )\cb1 \
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f2Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f2\cf4 \strokec4 )\cb1 \
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f3Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f3\cf4 \strokec4 )\cb1 \
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f4Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f4\cf4 \strokec4 )\cb1 \
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f5Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f5\cf4 \strokec4 )\cb1 \
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 f6Array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f6\cf4 \strokec4 )\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 featureArrays\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3    \cf11 \strokec11 FeatureArrays.new\cf4 \strokec4 (\cb1 \
+\cb3      \cf8 \strokec8 f1Array\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f1\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 f2Array\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f2\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 f3Array\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f3\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 f4Array\cf7 \strokec7 ,\cf4 \strokec4    \cf2 \strokec2 // f4\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 f5Array\cf7 \strokec7 ,\cf4 \strokec4      \cf2 \strokec2 // f5\cf4 \cb1 \strokec4 \
+\cb3      \cf8 \strokec8 f6Array\cf4 \strokec4      \cf2 \strokec2 // f6\cf4 \cb1 \strokec4 \
+\cb3    )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Calculate RQK value for historical data\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 rqkValue\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 isRationalSigma\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf11 \strokec11 sigmoid\cf4 \strokec4 (\cf9 \strokec9 close\cf4 \strokec4 ) \cf7 \strokec7 :\cf4 \strokec4    \cf11 \strokec11 rationalQuadratic\cf4 \strokec4 (\cf9 \strokec9 close\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 8\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0.5\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 25\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Calculate the Euclidean distance between a given feature series and the corresponding feature arrays at index 'i'.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // i: The index at which to calculate the distance.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureSeries: An instance of the FeatureSeries structure containing feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureArrays: An instance of the FeatureArrays structure containing arrays of feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The Euclidean distance between the feature series and feature arrays.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_euclidean_distance\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureSeries
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureArrays
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f1\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f2\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f4\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f4\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f5\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f5\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f6\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f6\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cb1 \
+\cb3          \cf7 \strokec7 if\cf4 \strokec4    \cf5 \strokec5 str.tonumber\cf4 \strokec4 (\cf9 \strokec9 timeframe.period\cf4 \strokec4 ) \cf7 \strokec7 <=\cf4 \strokec4    \cf12 \strokec12 20\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f3\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f3\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf5 \strokec5 math.sqrt\cf4 \strokec4 (\cf8 \strokec8 distance\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Calculate the Lorentzian distance between a given feature series and the corresponding feature arrays at index 'i'.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Lorentzian distance is a measure of dissimilarity between two vectors, considering the absolute difference between their corresponding elements.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // It is calculated as the sum of the logarithm of one plus the absolute difference for each feature.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Use For: Comparing the dissimilarity between feature series and feature arrays in the context of trading signals or other applications.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // i: The index at which to calculate the distance.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureSeries: An instance of the FeatureSeries structure containing feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureArrays: An instance of the FeatureArrays structure containing arrays of feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The Lorentzian distance between the feature series and feature arrays.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // A higher value indicates higher dissimilarity, while a lower value indicates higher similarity.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_lorentzian_distance\cf4 \strokec4 (
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureSeries
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    
+\f1\b \cf7 \strokec7 FeatureArrays
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f1\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f2\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f4\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f4\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f5\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f5\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3          \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f6\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f6\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3          \cb1 \
+\cb3          \cf7 \strokec7 if\cf4 \strokec4    \cf5 \strokec5 str.tonumber\cf4 \strokec4 (\cf9 \strokec9 timeframe.period\cf4 \strokec4 ) \cf7 \strokec7 <=\cf4 \strokec4    \cf12 \strokec12 20\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 distance\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.log\cf4 \strokec4 (\cf12 \strokec12 1\cf7 \strokec7 +\cf5 \strokec5 math.abs\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f3\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f3\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\
+\cb3          \cf5 \strokec5 math.sqrt\cf4 \strokec4 (\cf8 \strokec8 distance\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Calculate the cosine similarity between a given feature series and the corresponding feature arrays at index 'i'.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Cosine similarity is a measure of similarity between two non-zero vectors of an inner product space.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // It measures the cosine of the angle between the vectors, indicating their directional similarity.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // The closer the cosine similarity value is to 1, the more similar the vectors are.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Use For: Comparing the similarity between feature series and feature arrays in the context of trading signals or other applications.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // i: The index at which to calculate the similarity.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureSeries: An instance of the FeatureSeries structure containing feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // featureArrays: An instance of the FeatureArrays structure containing arrays of feature values.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The cosine similarity between the feature series and feature arrays.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // A value close to 1 indicates high similarity, while a value close to 0 indicates low similarity or dissimilarity.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_cosine_similarity\cf4 \strokec4 (\cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\
+\cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f1\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f2\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f4\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f4\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f5\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f5\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f6\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f6\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f2\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f4\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f5\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f6\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f4\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f5\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f6\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf7 \strokec7 if\cf4 \strokec4    \cf5 \strokec5 str.tonumber\cf4 \strokec4 (\cf9 \strokec9 timeframe.period\cf4 \strokec4 ) \cf7 \strokec7 <=\cf4 \strokec4    \cf12 \strokec12 20\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f3\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f3\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3                  \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4      \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf8 \strokec8 featureSeries\cf4 \strokec4 .\cf8 \strokec8 f3\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\cb3                  \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 +=\cf4 \strokec4    \cf5 \strokec5 math.pow\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 featureArrays\cf4 \strokec4 .\cf8 \strokec8 f3\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf5 \strokec5 math.sqrt\cf4 \strokec4 (\cf8 \strokec8 magnitudeSeries\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf5 \strokec5 math.sqrt\cf4 \strokec4 (\cf8 \strokec8 magnitudeArray\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \strokec4    \cf7 \strokec7 or\cf4 \strokec4    \cf8 \strokec8 magnitudeArray\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3                  \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 else\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 dotProduct\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    (\cf8 \strokec8 magnitudeSeries\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 magnitudeArray\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Perform machine learning logic to calculate distances and predictions based on the selected method.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Use For: Analyzing and predicting signals in trading or other applications using machine learning techniques.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 maxBarsBackIndex\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 last_bar_index\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf8 \strokec8 historyLookBack\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 last_bar_index\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 historyLookBack\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\
+\cf8 \cb3 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 close\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 y_train_series\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 [\cf12 \strokec12 4\cf4 \strokec4 ] \cf7 \strokec7 <\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 [\cf12 \strokec12 0\cf4 \strokec4 ] \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 -1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 [\cf12 \strokec12 4\cf4 \strokec4 ] \cf7 \strokec7 >\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4 [\cf12 \strokec12 0\cf4 \strokec4 ] \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 y_train_array\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_int\cf4 \strokec4 (\cf12 \strokec12 0\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Variables used for ML Logic\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 predictions\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 (\cf12 \strokec12 0\cf4 \strokec4 )\cb1 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.\cf4 \cb1 \strokec4 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 signal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cf7 \cb3 \strokec7 var\cf4 \strokec4    \cf8 \strokec8 distances\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_float\cf4 \strokec4 (\cf12 \strokec12 0\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 y_train_array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 y_train_series\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 lastDistance\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 -1.0\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 math.min\cf4 \strokec4 (\cf8 \strokec8 historyLookBack\cf12 \strokec12 -1\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 array.size\cf4 \strokec4 (\cf8 \strokec8 y_train_array\cf4 \strokec4 )\cf12 \strokec12 -1\cf4 \strokec4 )\cb1 \
+\cf8 \cb3 \strokec8 sizeLoop\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 math.min\cf4 \strokec4 (\cf8 \strokec8 historyLookBack\cf12 \strokec12 -1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 size\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Get the machine learning distance based on the selected method.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //      i: The index at which to calculate the distance.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The distance value based on the selected method (Lorentzian, Euclidean, or Cosine).\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_ML_Distance\cf4 \strokec4 (\cf8 \strokec8 i\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf7 \strokec7 switch\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 methodSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Lorentzian'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_lorentzian_distance\cf4 \strokec4 (\cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 )\cb1 \
+\cb3                  \cf8 \strokec8 methodSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Euclidean'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_euclidean_distance\cf4 \strokec4 (\cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 )\cb1 \
+\cb3                  \cf8 \strokec8 methodSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'Cosine similarity'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf11 \strokec11 get_cosine_similarity\cf4 \strokec4 (\cf8 \strokec8 i\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureSeries\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 featureArrays\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Perform machine learning logic to calculate distances and predictions based on the selected method.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Use For: Analyzing and predicting signals in trading or other applications using machine learning techniques.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters: None\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: None\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 if\cf4 \strokec4    \cf9 \strokec9 bar_index\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf8 \strokec8 maxBarsBackIndex\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf7 \strokec7 for\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 to\cf4 \strokec4    \cf8 \strokec8 sizeLoop\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 d\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 get_ML_Distance\cf4 \strokec4 (\cf8 \strokec8 i\cf4 \strokec4 )\cb1 \
+\cb3                  \cf2 \strokec2 // Compare the distance with the last recorded distance and check if the index is divisible by 4.\cf4 \cb1 \strokec4 \
+\cb3                  \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 d\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf8 \strokec8 lastDistance\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4    \cf7 \strokec7 %\cf4 \strokec4    \cf12 \strokec12 4\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 lastDistance\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 d\cf4 \cb1 \strokec4 \
+\cb3                          \cf2 \strokec2 // Store the distance and corresponding prediction in arrays.\cf4 \cb1 \strokec4 \
+\cb3                          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 distances\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 d\cf4 \strokec4 )\cb1 \
+\cb3                          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 predictions\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 math.round\cf4 \strokec4 (\cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 y_train_array\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 i\cf4 \strokec4 )))\cb1 \
+\cb3                          \cf2 \strokec2 // Check if the number of predictions exceeds the desired count.\cf4 \cb1 \strokec4 \
+\cb3                          \cf7 \strokec7 if\cf4 \strokec4    \cf5 \strokec5 array.size\cf4 \strokec4 (\cf8 \strokec8 predictions\cf4 \strokec4 ) \cf7 \strokec7 >\cf4 \strokec4    \cf8 \strokec8 nearest_Probable_Distance\cf4 \cb1 \strokec4 \
+\cb3                                  \cf2 \strokec2 // Update the last recorded distance to account for the shifting of arrays.\cf4 \cb1 \strokec4 \
+\cb3                                  \cf8 \strokec8 lastDistance\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 distances\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 math.round\cf4 \strokec4 (\cf8 \strokec8 nearest_Probable_Distance\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf12 \strokec12 3\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf12 \strokec12 4\cf4 \strokec4 ))\cb1 \
+\cb3                                  \cf2 \strokec2 // Remove the oldest distance and prediction from the arrays.\cf4 \cb1 \strokec4 \
+\cb3                                  \cf5 \strokec5 array.shift\cf4 \strokec4 (\cf8 \strokec8 distances\cf4 \strokec4 )\cb1 \
+\cb3                                  \cf5 \strokec5 array.shift\cf4 \strokec4 (\cf8 \strokec8 predictions\cf4 \strokec4 )\cb1 \
+\
+\cb3          \cf2 \strokec2 // Calculate the final prediction by summing up the predictions.\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf5 \strokec5 array.sum\cf4 \strokec4 (\cf8 \strokec8 predictions\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Get the trend value based on the selected trend selection method.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The calculated trend value.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 getTrend\cf4 \strokec4 () \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf7 \strokec7 switch\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'CPMA'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf8 \strokec8 isRational\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 isRationalSigma\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf11 \strokec11 sigmoid\cf4 \strokec4 (\cf8 \strokec8 CPMA\cf4 \strokec4 ) \cf7 \strokec7 :\cf4 \strokec4    \cf11 \strokec11 rationalQuadratic\cf4 \strokec4 (\cf8 \strokec8 CPMA\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 8\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0.5\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 25\cf4 \strokec4 ) \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 CPMA\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'FRMA'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf8 \strokec8 isRational\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 isRationalSigma\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf11 \strokec11 sigmoid\cf4 \strokec4 (\cf8 \strokec8 FRMA\cf4 \strokec4 ) \cf7 \strokec7 :\cf4 \strokec4    \cf11 \strokec11 rationalQuadratic\cf4 \strokec4 (\cf8 \strokec8 FRMA\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 8\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0.5\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 25\cf4 \strokec4 ) \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 FRMA\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'RationalQuad'\cf4 \strokec4    \cf7 \strokec7 =>\cf4 \strokec4    \cf8 \strokec8 rqkValue\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 trend\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 getTrend\cf4 \strokec4 ()\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Determine if the current price is bullish or bearish relative to the trend.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+
+\f1\b \cf7 \cb3 \strokec7 bool
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 isBullishSmooth\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 close\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf8 \strokec8 trend\cf4 \cb1 \strokec4 \
+
+\f1\b \cf7 \cb3 \strokec7 bool
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 isBearishSmooth\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 close\cf4 \strokec4    \cf7 \strokec7 <=\cf4 \strokec4    \cf8 \strokec8 trend\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Get the gradient color and plot the trend line.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 [\cf8 \strokec8 avgrationalQuad\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 plotColor\cf4 \strokec4 ] \cf7 \strokec7 =\cf4 \strokec4    \cf10 \strokec10 CSM.getGradientColor\cf4 \strokec4 (\cf8 \strokec8 isFirstbar\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 barstate.isfirst\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 trend\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 length\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'CPMA'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 cpmaLength\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 trenSelection\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf6 \strokec6 'FRMA'\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 frmaLength\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 14\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 isSmoothed\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 false\cf4 \strokec4 )\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 plot\cf4 \strokec4 (\cf8 \strokec8 avgrationalQuad\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 color\cf7 \strokec7 =\cf8 \strokec8 plotColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 linewidth\cf7 \strokec7 =\cf12 \strokec12 2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 title\cf7 \strokec7 =\cf6 \strokec6 "Trend"\cf4 \strokec4 )\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Filtered Signal: The model's prediction of future price movement direction with user-defined filters applied\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 signal\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 >\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    (\cf8 \strokec8 enableFilter\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 isBullishSmooth\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 true\cf4 \strokec4 ) \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 <\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    (\cf8 \strokec8 enableFilter\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 isBearishSmooth\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 true\cf4 \strokec4 ) \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 -1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf5 \strokec5 nz\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 [\cf12 \strokec12 1\cf4 \strokec4 ])\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if the signal type has changed\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isDifferentSignalType\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 )\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if there is an early signal flip\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isEarlySignalFlip\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 ) \cf7 \strokec7 and\cf4 \strokec4    (\cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 [\cf12 \strokec12 1\cf4 \strokec4 ]) \cf7 \strokec7 or\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 [\cf12 \strokec12 2\cf4 \strokec4 ]) \cf7 \strokec7 or\cf4 \strokec4    \cf5 \strokec5 ta.change\cf4 \strokec4 (\cf8 \strokec8 signal\cf4 \strokec4 [\cf12 \strokec12 3\cf4 \strokec4 ]))\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if the signal indicates a buy\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isBuySignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 signal\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if the signal indicates a sell\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isSellSignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 signal\cf4 \strokec4    \cf7 \strokec7 ==\cf4 \strokec4    \cf12 \strokec12 -1\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if a new buy signal has occurred with a different signal type\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isNewBuySignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 isBuySignal\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf8 \strokec8 isDifferentSignalType\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Check if a new sell signal has occurred with a different signal type\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 isNewSellSignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 isSellSignal\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf8 \strokec8 isDifferentSignalType\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Purpose: Get the color associated with a prediction value.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // prediction: The prediction value for which to retrieve the color.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: An array containing the color and index associated with the prediction value.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 get_PredictionColor\cf4 \strokec4 (\cf8 \strokec8 prediction\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 arrColor\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.new_color\cf4 \strokec4 (\cf12 \strokec12 0\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF0000\cf4 \strokec4 )    \cf2 \strokec2 // 0\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF1000\cf4 \strokec4 )    \cf2 \strokec2 // 1\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF2000\cf4 \strokec4 )    \cf2 \strokec2 // 2\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF3000\cf4 \strokec4 )    \cf2 \strokec2 // 3\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF4000\cf4 \strokec4 )    \cf2 \strokec2 // 4\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF5000\cf4 \strokec4 )    \cf2 \strokec2 // 5\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF6000\cf4 \strokec4 )    \cf2 \strokec2 // 6\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF7000\cf4 \strokec4 )    \cf2 \strokec2 // 7\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF8000\cf4 \strokec4 )    \cf2 \strokec2 // 8\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #FF9000\cf4 \strokec4 )    \cf2 \strokec2 // 9\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #0AAA00\cf4 \strokec4 )    \cf2 \strokec2 // 10\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #1BBB10\cf4 \strokec4 )    \cf2 \strokec2 // 11\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #2CCC20\cf4 \strokec4 )    \cf2 \strokec2 // 12\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #3DDD30\cf4 \strokec4 )    \cf2 \strokec2 // 13\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #5EEE50\cf4 \strokec4 )    \cf2 \strokec2 // 14\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #6FFF60\cf4 \strokec4 )    \cf2 \strokec2 // 15\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #7ABF70\cf4 \strokec4 )    \cf2 \strokec2 // 16\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #8BCF80\cf4 \strokec4 )    \cf2 \strokec2 // 17\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #9CDF90\cf4 \strokec4 )    \cf2 \strokec2 // 18\cf4 \cb1 \strokec4 \
+\cb3          \cf5 \strokec5 array.push\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 #90DFF9\cf4 \strokec4 )    \cf2 \strokec2 // 19\cf4 \cb1 \strokec4 \
+\
+\cb3          \cf8 \strokec8 distVal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf12 \strokec12 10\cf4 \strokec4    \cf7 \strokec7 or\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \strokec4    \cf7 \strokec7 <=\cf4 \strokec4    \cf12 \strokec12 -10\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 isNewSellSignal\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 -10\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 9\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf8 \strokec8 prediction\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 index\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 int\cf4 \strokec4 (\cf8 \strokec8 distVal\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf12 \strokec12 10\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 predictColor\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 array.get\cf4 \strokec4 (\cf8 \strokec8 arrColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 index\cf4 \strokec4 )\cb1 \
+\cb3          [\cf8 \strokec8 predictColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 index\cf4 \strokec4 ]\cb1 \
+\
+\cb3 [\cf8 \strokec8 predictColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 index\cf4 \strokec4 ] \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 get_PredictionColor\cf4 \strokec4 (\cf8 \strokec8 prediction\cf4 \strokec4 )    \cf2 \strokec2 // Retrieve the color and index based on the prediction value\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 plotshape\cf4 \strokec4 (\cf8 \strokec8 isNewBuySignal\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 low\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 na\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Buy'\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 shape.labelup\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 location.belowbar\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 color\cf7 \strokec7 =\cf8 \strokec8 predictColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 size\cf7 \strokec7 =\cf9 \strokec9 size.small\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 offset\cf7 \strokec7 =\cf12 \strokec12 0\cf4 \strokec4 )    \cf2 \strokec2 // Plot a 'Buy' label shape with the predicted color\cf4 \cb1 \strokec4 \
+\cf5 \cb3 \strokec5 plotshape\cf4 \strokec4 (\cf8 \strokec8 isNewSellSignal\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 high\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 na\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Sell'\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 shape.labeldown\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 location.abovebar\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 color\cf7 \strokec7 =\cf8 \strokec8 predictColor\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 size\cf7 \strokec7 =\cf9 \strokec9 size.small\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 offset\cf7 \strokec7 =\cf12 \strokec12 0\cf4 \strokec4 )    \cf2 \strokec2 // Plot a 'Sell' label shape with the predicted color\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Function: window\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Check if the current time is within the specified start and finish time range.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: True if the current time is within the range, false otherwise.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 window\cf4 \strokec4 () \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf9 \strokec9 time\cf4 \strokec4    \cf7 \strokec7 >=\cf4 \strokec4    \cf8 \strokec8 start\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf9 \strokec9 time\cf4 \strokec4    \cf7 \strokec7 <=\cf4 \strokec4    \cf8 \strokec8 finish\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf9 \strokec9 true\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf9 \strokec9 false\cf4 \cb1 \strokec4 \
+\cb3          \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 longSignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 false\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 shortSignal\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 false\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 if\cf4 \strokec4    \cf11 \strokec11 window\cf4 \strokec4 ()\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 longSignal\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 isNewBuySignal\cf4 \strokec4      \cf2 \strokec2 // Set longSignal to the value of isNewBuySignal if the current time is within the window\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 shortSignal\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 isNewSellSignal\cf4 \strokec4      \cf2 \strokec2 // Set shortSignal to the value of isNewSellSignal if the current time is within the window\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 lastSignalWasBullish\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 longSignal\cf4 \strokec4 ) \cf7 \strokec7 <\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 shortSignal\cf4 \strokec4 )    \cf2 \strokec2 // Check if the last signal was bullish\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 lastSignalWasBearish\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 shortSignal\cf4 \strokec4 ) \cf7 \strokec7 <\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 longSignal\cf4 \strokec4 )    \cf2 \strokec2 // Check if the last signal was bearish\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 barsSinceRedEntry\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 shortSignal\cf4 \strokec4 )    \cf2 \strokec2 // Count the number of bars since the last short entry signal\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 barsSinceRedExit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 isBullishSmooth\cf4 \strokec4 )    \cf2 \strokec2 // Count the number of bars since the last bearish exit signal\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 barsSinceGreenEntry\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 longSignal\cf4 \strokec4 )    \cf2 \strokec2 // Count the number of bars since the last long entry signal\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 barsSinceGreenExit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.barssince\cf4 \strokec4 (\cf8 \strokec8 isBearishSmooth\cf4 \strokec4 )    \cf2 \strokec2 // Count the number of bars since the last bullish exit signal\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 isValidShortExit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 barsSinceRedExit\cf4 \strokec4    \cf7 \strokec7 >\cf4 \strokec4    \cf8 \strokec8 barsSinceRedEntry\cf4 \strokec4      \cf2 \strokec2 // Check if the current short exit signal is valid\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 isValidLongExit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 barsSinceGreenExit\cf4 \strokec4    \cf7 \strokec7 >\cf4 \strokec4    \cf8 \strokec8 barsSinceGreenEntry\cf4 \strokec4      \cf2 \strokec2 // Check if the current long exit signal is valid\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 endLongTradeDynamic\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    (\cf8 \strokec8 isBullishSmooth\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf8 \strokec8 isValidLongExit\cf4 \strokec4 [\cf12 \strokec12 1\cf4 \strokec4 ])    \cf2 \strokec2 // Check if the current condition indicates the end of a long trade\cf4 \cb1 \strokec4 \
+\cf8 \cb3 \strokec8 endShortTradeDynamic\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    (\cf8 \strokec8 isBearishSmooth\cf4 \strokec4    \cf7 \strokec7 and\cf4 \strokec4    \cf8 \strokec8 isValidShortExit\cf4 \strokec4 [\cf12 \strokec12 1\cf4 \strokec4 ])    \cf2 \strokec2 // Check if the current condition indicates the end of a short trade\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Function: winRate\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Calculate the win rate percentage based on the number of winning trades and total trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // winTrades: The number of winning trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // totalTrades: The total number of trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The win rate percentage.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 winRate\cf4 \strokec4 (\cf8 \strokec8 winTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \strokec4    \cf8 \strokec8 winTrades\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf12 \strokec12 100\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Function: winRatio\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Calculate the win-loss ratio percentage based on the number of winning trades and losing trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // winTrades: The number of winning trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // lossTrades: The number of losing trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Returns: The win-loss ratio percentage.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 winRatio\cf4 \strokec4 (\cf8 \strokec8 winTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 lossTrades\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \strokec4    \cf8 \strokec8 winTrades\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    (\cf8 \strokec8 winTrades\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 lossTrades\cf4 \strokec4 ) \cf7 \strokec7 *\cf4 \strokec4    \cf12 \strokec12 100\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 //====================================== Thanks to JDEHORTY For the backtesting approach==========//\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //===============================================================================================//\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 // Function: backtest\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Purpose: Perform the backtesting calculations and return trade statistics.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Parameters:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // high, low, open: Price data inputs for the backtest.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // startLongTrade, endLongTrade, startShortTrade, endShortTrade, isEarlySignalFlip: Signals and flags for the trades.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // maxBarsBackIndex, thisBarIndex: Bar index data for backtesting.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // src: Source data for market price.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // useWorstCase: Flag to determine if worst-case scenario should be considered for market price.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // window: Flag to indicate if the current time is within the specified window.\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 backtest\cf4 \strokec4 (\cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 open\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 startLongTrade\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 endLongTrade\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 startShortTrade\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 endShortTrade\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 isEarlySignalFlip\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 maxBarsBackIndex\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 thisBarIndex\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 src\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 useWorstCase\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 window\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 marketPrice\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 useWorstCase\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf8 \strokec8 src\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    (\cf9 \strokec9 high\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf9 \strokec9 low\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf9 \strokec9 open\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf9 \strokec9 open\cf4 \strokec4 ) \cf7 \strokec7 /\cf4 \strokec4    \cf12 \strokec12 4\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 start_long_trade\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 na\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 start_short_trade\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 na\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 total_long_profit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 float
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 total_short_profit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0.0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 wins\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 losses\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 trade_count\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 int
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 early_signal_flip_count\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3          \cf7 \strokec7 var\cf4 \strokec4    
+\f1\b \cf7 \strokec7 bool
+\f0\b0 \cf4 \strokec4    \cf8 \strokec8 tookProfit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf9 \strokec9 false\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 lot_size\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\
+\cb3          \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 window\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 trade_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 wins\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 losses\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                  \cf8 \strokec8 early_signal_flip_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\
+\cb3                  \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 startLongTrade\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 start_short_trade\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf9 \strokec9 na\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 early_signal_flip_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 isEarlySignalFlip\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 start_long_trade\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 marketPrice\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 trade_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\
+\cb3                  \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 endLongTrade\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 marketPrice\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 start_long_trade\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 wins\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 >\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 losses\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 <\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 total_long_profit\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 lot_size\cf4 \cb1 \strokec4 \
+\
+\cb3                  \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 startShortTrade\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 start_long_trade\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf9 \strokec9 na\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 start_short_trade\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 marketPrice\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 trade_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf12 \strokec12 1\cf4 \cb1 \strokec4 \
+\
+\cb3                  \cf7 \strokec7 if\cf4 \strokec4    \cf8 \strokec8 endShortTrade\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 early_signal_flip_count\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 isEarlySignalFlip\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 start_short_trade\cf4 \strokec4    \cf7 \strokec7 -\cf4 \strokec4    \cf8 \strokec8 marketPrice\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 wins\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 >\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 losses\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 <\cf4 \strokec4    \cf12 \strokec12 0\cf4 \strokec4    \cf7 \strokec7 ?\cf4 \strokec4    \cf12 \strokec12 1\cf4 \strokec4    \cf7 \strokec7 :\cf4 \strokec4    \cf12 \strokec12 0\cf4 \cb1 \strokec4 \
+\cb3                          \cf8 \strokec8 total_short_profit\cf4 \strokec4    \cf7 \strokec7 :=\cf4 \strokec4    \cf8 \strokec8 delta\cf4 \strokec4    \cf7 \strokec7 *\cf4 \strokec4    \cf8 \strokec8 lot_size\cf4 \cb1 \strokec4 \
+\
+\cb3          \cf8 \strokec8 tradeStatsHeader\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf6 \strokec6 "\uc0\u55357 \u56520    CSM Strategy Stats (Assumption)"\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 longProfit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 total_long_profit\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 shortProfit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 total_short_profit\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 longShortProfit\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 longProfit\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 shortProfit\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 totalEarlySignalFlips\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 early_signal_flip_count\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 wins\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 totalLosses\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 losses\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 totalTrades\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 ta.cum\cf4 \strokec4 (\cf8 \strokec8 wins\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 losses\cf4 \strokec4 )\cb1 \
+\cb3          \cf8 \strokec8 winLossRatio\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf4 \cb1 \strokec4 \
+\cb3          \cf8 \strokec8 winRate\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    (\cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf4 \strokec4 )\cb1 \
+\
+\cb3          [\cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalEarlySignalFlips\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tradeStatsHeader\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winLossRatio\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winRate\cf4 \strokec4 ]\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // Perform the backtest and store the trade statistics\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 [\cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalEarlySignalFlips\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tradeStatsHeader\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winLossRatio\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winRate\cf4 \strokec4 ] \cf7 \strokec7 =\cf4 \strokec4    \cf11 \strokec11 backtest\cf4 \strokec4 (\cf9 \strokec9 high\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 low\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 open\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 longSignal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 endLongTradeDynamic\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 shortSignal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 endShortTradeDynamic\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 isEarlySignalFlip\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 maxBarsBackIndex\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 bar_index\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 trend\cf7 \strokec7 ,\cf4 \strokec4    \cf9 \strokec9 false\cf7 \strokec7 ,\cf4 \strokec4    \cf11 \strokec11 window\cf4 \strokec4 ())\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // The following can be used to display real-time trade stats. This can be a useful mechanism for obtaining real-time feedback during Feature Engineering. This does NOT replace the need to properly backtest.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Note: In this context, a "Stop-Loss" is defined instances where the ML Signal prematurely flips directions before an exit signal can be generated.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //[totalWins, totalLosses, totalEarlySignalFlips, totalTrades, tradeStatsHeader, winLossRatio, winRate] = ml.backtest(high, low, open, longSignal, endLongTradeDynamic, shortSignal, endShortTradeDynamic, isEarlySignalFlip, maxBarsBackIndex, bar_index, trend, false)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Plotting the trade statistics in a table\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 tableData2\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 table.new\cf4 \strokec4 (\cf8 \strokec8 table_position\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 columns\cf7 \strokec7 =\cf12 \strokec12 2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 rows\cf7 \strokec7 =\cf12 \strokec12 7\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 frame_color\cf7 \strokec7 =\cf5 \strokec5 color.new\cf4 \strokec4 (\cf9 \strokec9 color.black\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 100\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 frame_width\cf7 \strokec7 =\cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 border_width\cf7 \strokec7 =\cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 border_color\cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 color.new\cf4 \strokec4 (\cf9 \strokec9 color.black\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 100\cf4 \strokec4 ))\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb3 \strokec11 update_table\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tradeStatsHeader\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winLossRatio\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 winRate\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 stopLosses\cf4 \strokec4 ) \cf7 \strokec7 =>\cf4 \strokec4    \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf8 \strokec8 c_transparent\cf4 \strokec4    \cf7 \strokec7 =\cf4 \strokec4    \cf5 \strokec5 color.new\cf4 \strokec4 (\cf9 \strokec9 color.black\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 100\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tradeStatsHeader\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Winrate'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '#.#%'\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Trades'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 2\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '#'\cf4 \strokec4 ) \cf7 \strokec7 +\cf4 \strokec4    \cf6 \strokec6 ' ('\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '#'\cf4 \strokec4 ) \cf7 \strokec7 +\cf4 \strokec4    \cf6 \strokec6 '|'\cf4 \strokec4    \cf7 \strokec7 +\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '#'\cf4 \strokec4 ) \cf7 \strokec7 +\cf4 \strokec4    \cf6 \strokec6 ')'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 5\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'WL Ratio'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 5\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalWins\cf4 \strokec4    \cf7 \strokec7 /\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '0.00'\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 0\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 6\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 'Early Signal Flips'\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\cb3          \cf5 \strokec5 table.cell\cf4 \strokec4 (\cf8 \strokec8 tbl\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 1\cf7 \strokec7 ,\cf4 \strokec4    \cf12 \strokec12 6\cf7 \strokec7 ,\cf4 \strokec4    \cf5 \strokec5 str.tostring\cf4 \strokec4 (\cf8 \strokec8 totalEarlySignalFlips\cf7 \strokec7 ,\cf4 \strokec4    \cf6 \strokec6 '#'\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_halign\cf7 \strokec7 =\cf9 \strokec9 text.align_center\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 bgcolor\cf7 \strokec7 =\cf8 \strokec8 c_transparent\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_color\cf7 \strokec7 =\cf9 \strokec9 color.teal\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 text_size\cf7 \strokec7 =\cf8 \strokec8 table_text_size\cf4 \strokec4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 if\cf4 \strokec4    \cf9 \strokec9 barstate.islast\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3          \cf11 \strokec11 update_table\cf4 \strokec4 (\cf8 \strokec8 tableData2\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 tradeStatsHeader\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalTrades\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalLosses\cf7 \strokec7 ,\cf4 \strokec4    \cf11 \strokec11 winRatio\cf4 \strokec4 (\cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf8 \strokec8 totalTrades\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf11 \strokec11 winRate\cf4 \strokec4 (\cf8 \strokec8 totalWins\cf7 \strokec7 ,\cf8 \strokec8 totalLosses\cf4 \strokec4 )\cf7 \strokec7 ,\cf4 \strokec4    \cf8 \strokec8 totalEarlySignalFlips\cf4 \strokec4 )\cb1 \
+\
+}
